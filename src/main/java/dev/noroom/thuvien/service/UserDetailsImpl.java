@@ -6,7 +6,6 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 
 public class UserDetailsImpl implements UserDetails {
@@ -32,19 +31,7 @@ public class UserDetailsImpl implements UserDetails {
     }
 
     public static UserDetailsImpl build(User user) {
-        List<GrantedAuthority> authorities = user.getRole().equals("admin") ?
-                List.of(new GrantedAuthority() {
-                    @Override
-                    public String getAuthority() {
-                        return "ROLE_ADMIN";
-                    }
-                }) :
-                List.of(new GrantedAuthority() {
-                    @Override
-                    public String getAuthority() {
-                        return "ROLE_USER";
-                    }
-                });
+        List<GrantedAuthority> authorities = List.of(new SimpleGrantedAuthority(user.getRole()));
         return new UserDetailsImpl(
                 user.getId(),
                 user.getUsername(),
@@ -56,7 +43,7 @@ public class UserDetailsImpl implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return Collections.singleton(new SimpleGrantedAuthority("USER"));
+        return authorities;
     }
 
     public Long getId() {
