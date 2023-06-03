@@ -11,10 +11,10 @@ import lombok.Data;
 @Table(name = "orders")
 public class Order {
     @Id
-    int id;
-    int userId;
-    int bookId;
-    int quantity;
+    long id;
+    long userId;
+    long bookId;
+    long quantity;
 
     public Order() {
     }

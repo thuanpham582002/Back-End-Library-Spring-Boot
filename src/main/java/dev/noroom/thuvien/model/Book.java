@@ -19,8 +19,8 @@ public class Book {
     @NonNull String description;
     long genreId;
     @NonNull Date releaseDate;
-    int numPages;
-    int sold;
+    long numPages;
+    long sold;
     @Nullable
     String selectedImage;
 

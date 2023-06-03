@@ -15,5 +15,5 @@ public interface ReviewService {
 
     boolean updateReview(long id, Review review);
 
-    Review getReviewByOrderId(int id);
+    Review getReviewByOrderId(long id);
 }

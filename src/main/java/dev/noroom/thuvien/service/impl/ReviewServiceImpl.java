@@ -57,7 +57,7 @@ public class ReviewServiceImpl implements ReviewService {
     }
 
     @Override
-    public Review getReviewByOrderId(int id) {
+    public Review getReviewByOrderId(long id) {
         Review review = reviewRepository.findByOrderId(id);
         if (review == null) {
             return null;

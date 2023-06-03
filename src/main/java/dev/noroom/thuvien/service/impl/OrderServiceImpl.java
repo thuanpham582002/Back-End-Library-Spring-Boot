@@ -1,6 +1,8 @@
 package dev.noroom.thuvien.service.impl;
 
+import dev.noroom.thuvien.model.Book;
 import dev.noroom.thuvien.model.Order;
+import dev.noroom.thuvien.repository.BookRepository;
 import dev.noroom.thuvien.repository.OrderRepository;
 import dev.noroom.thuvien.service.OrderService;
 import org.springframework.stereotype.Service;
@@ -11,8 +13,11 @@ import java.util.List;
 public class OrderServiceImpl implements OrderService {
     private final OrderRepository orderRepository;
 
-    public OrderServiceImpl(OrderRepository orderRepository) {
+    private final BookRepository bookRepository;
+
+    public OrderServiceImpl(OrderRepository orderRepository, BookRepository bookRepository) {
         this.orderRepository = orderRepository;
+        this.bookRepository = bookRepository;
     }
 
     @Override
@@ -34,6 +39,11 @@ public class OrderServiceImpl implements OrderService {
     public boolean addOrder(Order order) {
         try {
             orderRepository.save(order);
+            // increase sold of book
+            Book book = bookRepository.findById(order.getBookId())
+                    .orElseThrow();
+            book.setSold(book.getSold() + order.getQuantity());
+            bookRepository.save(book);
             return true;
         } catch (Exception e) {
             return false;
@@ -44,6 +54,13 @@ public class OrderServiceImpl implements OrderService {
     public boolean deleteOrder(long id) {
         try {
             orderRepository.deleteById((int) id);
+            // decrease sold of book
+            Order order = orderRepository.findById((int) id)
+                    .orElseThrow();
+            Book book = bookRepository.findById(order.getBookId())
+                    .orElseThrow();
+            book.setSold(book.getSold() - order.getQuantity());
+            bookRepository.save(book);
             return true;
         } catch (Exception e) {
             return false;
@@ -58,7 +75,13 @@ public class OrderServiceImpl implements OrderService {
             order1.setBookId(order.getBookId());
             order1.setUserId(order.getUserId());
             order1.setQuantity(order.getQuantity());
+            // update book sold
             orderRepository.save(order1);
+            Book book = bookRepository.findById(order.getBookId())
+                    .orElseThrow();
+            book.setSold(book.getSold() - order1.getQuantity() + order.getQuantity());
+            bookRepository.save(book);
+
             return true;
         } catch (Exception e) {
             return false;
