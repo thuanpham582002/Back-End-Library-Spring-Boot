@@ -4,6 +4,10 @@ import dev.noroom.thuvien.model.Review;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
-interface ReviewRepository   extends JpaRepository<Review, Integer> {
+public
+interface ReviewRepository extends JpaRepository<Review, Integer> {
+    Review findByOrderId(int id);
 }

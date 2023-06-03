@@ -1,5 +1,6 @@
 package dev.noroom.thuvien.model;
 
+import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NonNull;
@@ -11,14 +12,17 @@ import java.util.Date;
 @Table(name = "book")
 public class Book {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    int id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    long id;
     @NonNull String title;
     @NonNull String author;
     @NonNull String description;
-    @NonNull String genre;
+    long genreId;
     @NonNull Date releaseDate;
     int numPages;
+    int sold;
+    @Nullable
+    String selectedImage;
 
     public Book() {
     }

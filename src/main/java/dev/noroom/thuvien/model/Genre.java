@@ -1,20 +1,18 @@
 package dev.noroom.thuvien.model;
 
+
 import jakarta.persistence.*;
 import lombok.Data;
-import lombok.NonNull;
 
 @Data
 @Entity
-@Table(name = "review")
-public class Review {
+@Table(name = "genre")
+public class Genre {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     int id;
-    int orderId;
-    int rating;
-    @NonNull String comment;
+    String name;
 
-    public Review() {
+    public Genre() {
     }
 }

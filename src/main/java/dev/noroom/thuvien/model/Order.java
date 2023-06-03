@@ -8,14 +8,13 @@ import lombok.Data;
 
 @Data
 @Entity
-@Table(name = "order")
+@Table(name = "orders")
 public class Order {
     @Id
     int id;
     int userId;
     int bookId;
     int quantity;
-    String status;
 
     public Order() {
     }
