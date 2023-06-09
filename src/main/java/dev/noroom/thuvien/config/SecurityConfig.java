@@ -76,7 +76,7 @@ public class SecurityConfig {
                         .hasRole("admin")
                         .requestMatchers(HttpMethod.POST, "/api/books/add")
                         .permitAll()
-                        .requestMatchers("/api/books/")
+                        .requestMatchers("/api/books/**")
                         .permitAll()
                         .anyRequest()
                         .authenticated());

@@ -2,17 +2,15 @@ package dev.noroom.thuvien.controller;
 
 
 import dev.noroom.thuvien.model.Book;
-import dev.noroom.thuvien.model.Order;
-import dev.noroom.thuvien.model.Review;
+import dev.noroom.thuvien.model.dto.OrderDto;
 import dev.noroom.thuvien.service.BookService;
 import dev.noroom.thuvien.service.OrderService;
 import dev.noroom.thuvien.service.ReviewService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
+import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
 @CrossOrigin(origins = "*")
 @RestController
@@ -35,6 +33,7 @@ public class BookController {
     public ResponseEntity<List<Book>> getAllBooks() {
         List<Book> book = bookService.getAllBooks();
         if (book != null) {
+            Collections.reverse(book);
             return ResponseEntity.ok(book);
         } else {
             return ResponseEntity.notFound()
@@ -78,6 +77,7 @@ public class BookController {
 
     @PostMapping("/add")
     public ResponseEntity<?> addBook(@RequestBody Book book) {
+        System.out.println(book);
         if (bookService.addBook(book)) {
             return ResponseEntity.ok()
                     .build();
@@ -88,14 +88,8 @@ public class BookController {
     }
 
     @GetMapping("/orders/{bookId}")
-    public ResponseEntity<Map<Order, Review>> getOrdersByBookId(@PathVariable long bookId) {
-        Map<Order, Review> fullOrders = new java.util.HashMap<>(Map.of());
-        System.out.println("getOrdersByBookId");
-        List<Order> orders = orderService.getOrdersByBookId(bookId);
-        for (Order order : orders) {
-            Review review = reviewService.getReviewByOrderId(order.getId());
-            fullOrders.put(order, review);
-        }
-        return ResponseEntity.ok(fullOrders);
+    public ResponseEntity<List<OrderDto>> getOrdersByBookId(@PathVariable long bookId) {
+        List<OrderDto> orders = orderService.getOrdersByBookId(bookId);
+        return ResponseEntity.ok(orders);
     }
 }

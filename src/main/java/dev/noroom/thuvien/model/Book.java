@@ -2,13 +2,15 @@ package dev.noroom.thuvien.model;
 
 import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
-import lombok.Data;
-import lombok.NonNull;
+import lombok.*;
 
 import java.util.Date;
 
 @Data
 @Entity
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "book")
 public class Book {
     @Id
@@ -24,6 +26,4 @@ public class Book {
     @Nullable
     String selectedImage;
 
-    public Book() {
-    }
 }

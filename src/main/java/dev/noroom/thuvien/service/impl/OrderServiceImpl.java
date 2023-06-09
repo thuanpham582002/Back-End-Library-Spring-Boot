@@ -2,11 +2,15 @@ package dev.noroom.thuvien.service.impl;
 
 import dev.noroom.thuvien.model.Book;
 import dev.noroom.thuvien.model.Order;
+import dev.noroom.thuvien.model.Review;
+import dev.noroom.thuvien.model.User;
+import dev.noroom.thuvien.model.dto.OrderDto;
 import dev.noroom.thuvien.repository.BookRepository;
 import dev.noroom.thuvien.repository.OrderRepository;
 import dev.noroom.thuvien.service.OrderService;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -21,31 +25,58 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public List<Order> getAllOrders() {
-        return orderRepository.findAll();
+    public List<OrderDto> getAllOrders() {
+        return orderRepository.findAll()
+                .stream()
+                .map(OrderDto::fromOrder)
+                .toList();
     }
 
     @Override
-    public List<Order> getOrdersByBookId(long bookId) {
-        return orderRepository.findAllByBookId(bookId);
+    public List<OrderDto> getOrdersByBookId(long bookId) {
+        return orderRepository.findAllByBookId(bookId)
+                .stream()
+                .map(OrderDto::fromOrder)
+                .toList();
     }
 
     @Override
-    public List<Order> getOrdersByUserId(long userId) {
-        return orderRepository.findAllByUserId(userId);
+    public List<OrderDto> getOrdersByUserId(long userId) {
+        return orderRepository.findAllByUserId(userId)
+                .stream()
+                .map(OrderDto::fromOrder)
+                .toList();
     }
 
     @Override
-    public boolean addOrder(Order order) {
+    public boolean addOrder(OrderDto orderDto) {
         try {
+            Order order = Order.builder()
+                    .book(Book.builder()
+                            .id(orderDto.getBook()
+                                    .getId())
+                            .title(" ")
+                            .author(" ")
+                            .description(" ")
+                            .releaseDate(Date.from(new Date().toInstant()))
+                            .build())
+                    .user(User.builder()
+                            .id(orderDto.getUser()
+                                    .getId())
+                            .build())
+                    .quantity(orderDto.getQuantity())
+                    .build();
+
             orderRepository.save(order);
             // increase sold of book
-            Book book = bookRepository.findById(order.getBookId())
+            Book book = bookRepository.findById(orderDto.getBook()
+                            .getId())
                     .orElseThrow();
-            book.setSold(book.getSold() + order.getQuantity());
+            book.setSold(book.getSold() + orderDto.getQuantity());
             bookRepository.save(book);
             return true;
         } catch (Exception e) {
+            e.printStackTrace();
             return false;
         }
     }
@@ -53,14 +84,37 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public boolean deleteOrder(long id) {
         try {
-            orderRepository.deleteById((int) id);
-            // decrease sold of book
-            Order order = orderRepository.findById((int) id)
+            Order order = orderRepository.findById(id)
                     .orElseThrow();
-            Book book = bookRepository.findById(order.getBookId())
+            Book book = bookRepository.findById(order.getBook()
+                            .getId())
                     .orElseThrow();
             book.setSold(book.getSold() - order.getQuantity());
             bookRepository.save(book);
+            orderRepository.deleteById(id);
+            // decrease sold of book
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    @Override
+    public boolean updateOrder(OrderDto orderDto) {
+        try {
+            Order order = orderRepository.findById(orderDto.getId())
+                    .orElseThrow();
+            order.setQuantity(orderDto.getQuantity());
+
+            orderRepository.save(order);
+            // update book sold
+            Book book = bookRepository.findById(order.getBook()
+                            .getId())
+                    .orElseThrow();
+            book.setSold(book.getSold() - order.getQuantity() + order.getQuantity());
+            bookRepository.save(book);
+
             return true;
         } catch (Exception e) {
             return false;
@@ -68,23 +122,16 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public boolean updateOrder(Order order) {
+    public Order addReviewToOrder(Long orderId, Review review) {
         try {
-            Order order1 = orderRepository.findById((int) order.getId())
+            Order order = orderRepository.findById(orderId)
                     .orElseThrow();
-            order1.setBookId(order.getBookId());
-            order1.setUserId(order.getUserId());
-            order1.setQuantity(order.getQuantity());
-            // update book sold
-            orderRepository.save(order1);
-            Book book = bookRepository.findById(order.getBookId())
-                    .orElseThrow();
-            book.setSold(book.getSold() - order1.getQuantity() + order.getQuantity());
-            bookRepository.save(book);
-
-            return true;
+            order.setReview(review);
+            orderRepository.save(order);
+            return order;
         } catch (Exception e) {
-            return false;
+            e.printStackTrace();
+            return null;
         }
     }
 }

@@ -8,8 +8,10 @@ import java.util.List;
 
 @Repository
 public
-interface OrderRepository extends JpaRepository<Order, Integer> {
+interface OrderRepository extends JpaRepository<Order, Long> {
     List<Order> findAllByBookId(Long bookId);
 
     List<Order> findAllByUserId(Long userId);
+
+    Order findByUserIdAndBookId(Long userId, Long bookId);
 }

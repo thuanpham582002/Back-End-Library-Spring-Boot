@@ -1,19 +1,23 @@
 package dev.noroom.thuvien.service;
 
 import dev.noroom.thuvien.model.Order;
+import dev.noroom.thuvien.model.Review;
+import dev.noroom.thuvien.model.dto.OrderDto;
 
 import java.util.List;
 
 public interface OrderService {
-    List<Order> getAllOrders();
+    List<OrderDto> getAllOrders();
 
-    List<Order> getOrdersByBookId(long bookId);
+    List<OrderDto> getOrdersByBookId(long bookId);
 
-    List<Order> getOrdersByUserId(long userId);
+    List<OrderDto> getOrdersByUserId(long userId);
 
-    boolean addOrder(Order order);
+    boolean addOrder(OrderDto order);
 
     boolean deleteOrder(long id);
 
-    boolean updateOrder(Order order);
+    boolean updateOrder(OrderDto orderDto);
+
+    Order addReviewToOrder(Long orderId, Review review);
 }

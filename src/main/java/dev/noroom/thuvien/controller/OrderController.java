@@ -2,6 +2,7 @@ package dev.noroom.thuvien.controller;
 
 import dev.noroom.thuvien.model.Order;
 import dev.noroom.thuvien.model.Review;
+import dev.noroom.thuvien.model.dto.OrderDto;
 import dev.noroom.thuvien.service.OrderService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,7 +20,7 @@ public class OrderController {
 
     @GetMapping("/")
     public ResponseEntity<?> getAllOrders() {
-        List<Order> review = orderService.getAllOrders();
+        List<OrderDto> review = orderService.getAllOrders();
         if (review != null) {
             return ResponseEntity.ok(review);
         } else {
@@ -30,7 +31,7 @@ public class OrderController {
 
     @GetMapping("/book/{bookId}")
     public ResponseEntity<?> getOrdersByBookId(@PathVariable Long bookId) {
-        List<Order> review = orderService.getOrdersByBookId(bookId);
+        List<OrderDto> review = orderService.getOrdersByBookId(bookId);
         if (review != null) {
             return ResponseEntity.ok(review);
         } else {
@@ -39,9 +40,9 @@ public class OrderController {
         }
     }
 
-    @PostMapping("/user/{userId}")
+    @GetMapping("/user/{userId}")
     public ResponseEntity<?> getOrdersByUserId(@PathVariable Long userId) {
-        List<Order> review = orderService.getOrdersByUserId(userId);
+        List<OrderDto> review = orderService.getOrdersByUserId(userId);
         if (review != null) {
             return ResponseEntity.ok(review);
         } else {
@@ -51,8 +52,9 @@ public class OrderController {
     }
 
     @PostMapping("/add")
-    public ResponseEntity<?> addOrder(@RequestBody Order order) {
-        if (orderService.addOrder(order)) {
+    public ResponseEntity<?> addOrder(@RequestBody OrderDto orderDto) {
+        System.out.println(orderDto);
+        if (orderService.addOrder(orderDto)) {
             return ResponseEntity.ok()
                     .build();
         } else {
@@ -73,8 +75,8 @@ public class OrderController {
     }
 
     @PutMapping("/update")
-    public ResponseEntity<?> updateOrder(@RequestBody Order order) {
-        if (orderService.updateOrder(order)) {
+    public ResponseEntity<?> updateOrder(@RequestBody OrderDto orderDto) {
+        if (orderService.updateOrder(orderDto)) {
             return ResponseEntity.ok()
                     .build();
         } else {
@@ -83,4 +85,13 @@ public class OrderController {
         }
     }
 
+
+    @PostMapping("/{orderId}/reviews/add")
+    public ResponseEntity<String> addReviewToOrder(@PathVariable Long orderId, @RequestBody Review review) {
+        Order order = orderService.addReviewToOrder(orderId, review);
+        if (order != null) {
+            return ResponseEntity.ok("Đánh giá đã được thêm vào đơn hàng");
+        }
+        return ResponseEntity.notFound().build();
+    }
 }
