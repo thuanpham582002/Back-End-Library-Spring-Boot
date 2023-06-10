@@ -13,11 +13,11 @@ public interface OrderService {
 
     List<OrderDto> getOrdersByUserId(long userId);
 
-    boolean addOrder(OrderDto order);
+    boolean addOrder(Order order);
 
     boolean deleteOrder(long id);
 
-    boolean updateOrder(OrderDto orderDto);
+    boolean updateOrder(Order order);
 
     Order addReviewToOrder(Long orderId, Review review);
 }

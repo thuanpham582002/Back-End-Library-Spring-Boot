@@ -3,6 +3,7 @@ package dev.noroom.thuvien.model.dto;
 import dev.noroom.thuvien.model.Book;
 import dev.noroom.thuvien.model.Order;
 import dev.noroom.thuvien.model.Review;
+import dev.noroom.thuvien.service.UserService;
 import lombok.Builder;
 import lombok.Data;
 
@@ -25,10 +26,11 @@ public class OrderDto {
                 .build();
     }
 
-    public static Order toOrder(OrderDto orderDto) {
+    public static Order toOrder(OrderDto orderDto, UserService userService) {
         return Order.builder()
                 .id(orderDto.getId())
-                .user(UserDto.toUser(orderDto.getUser()))
+                .user(userService.getUserById(orderDto.getUser()
+                        .getId()))
                 .book(orderDto.getBook())
                 .quantity(orderDto.getQuantity())
                 .review(orderDto.getReview())

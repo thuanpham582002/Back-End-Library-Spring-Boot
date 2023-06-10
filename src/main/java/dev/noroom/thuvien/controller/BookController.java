@@ -2,8 +2,10 @@ package dev.noroom.thuvien.controller;
 
 
 import dev.noroom.thuvien.model.Book;
+import dev.noroom.thuvien.model.dto.BookDto;
 import dev.noroom.thuvien.model.dto.OrderDto;
 import dev.noroom.thuvien.service.BookService;
+import dev.noroom.thuvien.service.GenreService;
 import dev.noroom.thuvien.service.OrderService;
 import dev.noroom.thuvien.service.ReviewService;
 import org.springframework.http.ResponseEntity;
@@ -23,18 +25,21 @@ public class BookController {
 
     final private ReviewService reviewService;
 
-    BookController(BookService bookService, OrderService orderService, ReviewService reviewService) {
+    final private GenreService genreService;
+
+    BookController(BookService bookService, OrderService orderService, ReviewService reviewService, GenreService genreService) {
         this.bookService = bookService;
         this.orderService = orderService;
         this.reviewService = reviewService;
+        this.genreService = genreService;
     }
 
     @GetMapping("/")
-    public ResponseEntity<List<Book>> getAllBooks() {
+    public ResponseEntity<List<BookDto>> getAllBooks() {
         List<Book> book = bookService.getAllBooks();
         if (book != null) {
             Collections.reverse(book);
-            return ResponseEntity.ok(book);
+            return ResponseEntity.ok(BookDto.fromList(book, genreService));
         } else {
             return ResponseEntity.notFound()
                     .build();
@@ -53,11 +58,11 @@ public class BookController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> getBookById(@PathVariable long id) {
+    public ResponseEntity<BookDto> getBookById(@PathVariable long id) {
         System.out.println(id);
         Book book = bookService.getBookById(id);
         if (book != null) {
-            return ResponseEntity.ok(book);
+            return ResponseEntity.ok(BookDto.fromBook(book, genreService));
         } else {
             return ResponseEntity.notFound()
                     .build();
@@ -65,8 +70,8 @@ public class BookController {
     }
 
     @PostMapping("/{id}")
-    public ResponseEntity<?> updateBook(@PathVariable long id, @RequestBody Book book) {
-        if (bookService.updateBook(id, book)) {
+    public ResponseEntity<?> updateBook(@PathVariable long id, @RequestBody BookDto bookDto) {
+        if (bookService.updateBook(id, BookDto.toBook(bookDto, false))) {
             return ResponseEntity.ok()
                     .build();
         } else {
@@ -76,9 +81,9 @@ public class BookController {
     }
 
     @PostMapping("/add")
-    public ResponseEntity<?> addBook(@RequestBody Book book) {
-        System.out.println(book);
-        if (bookService.addBook(book)) {
+    public ResponseEntity<?> addBook(@RequestBody BookDto bookDto) {
+        System.out.println(BookDto.toBook(bookDto, true));
+        if (bookService.addBook(BookDto.toBook(bookDto, true))) {
             return ResponseEntity.ok()
                     .build();
         } else {

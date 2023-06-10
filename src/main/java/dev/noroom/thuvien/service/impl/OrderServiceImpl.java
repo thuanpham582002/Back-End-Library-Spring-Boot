@@ -49,30 +49,14 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public boolean addOrder(OrderDto orderDto) {
+    public boolean addOrder(Order order) {
         try {
-            Order order = Order.builder()
-                    .book(Book.builder()
-                            .id(orderDto.getBook()
-                                    .getId())
-                            .title(" ")
-                            .author(" ")
-                            .description(" ")
-                            .releaseDate(Date.from(new Date().toInstant()))
-                            .build())
-                    .user(User.builder()
-                            .id(orderDto.getUser()
-                                    .getId())
-                            .build())
-                    .quantity(orderDto.getQuantity())
-                    .build();
-
             orderRepository.save(order);
             // increase sold of book
-            Book book = bookRepository.findById(orderDto.getBook()
+            Book book = bookRepository.findById(order.getBook()
                             .getId())
                     .orElseThrow();
-            book.setSold(book.getSold() + orderDto.getQuantity());
+            book.setSold(book.getSold() + order.getQuantity());
             bookRepository.save(book);
             return true;
         } catch (Exception e) {
@@ -101,12 +85,8 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public boolean updateOrder(OrderDto orderDto) {
+    public boolean updateOrder(Order order) {
         try {
-            Order order = orderRepository.findById(orderDto.getId())
-                    .orElseThrow();
-            order.setQuantity(orderDto.getQuantity());
-
             orderRepository.save(order);
             // update book sold
             Book book = bookRepository.findById(order.getBook()
@@ -114,9 +94,9 @@ public class OrderServiceImpl implements OrderService {
                     .orElseThrow();
             book.setSold(book.getSold() - order.getQuantity() + order.getQuantity());
             bookRepository.save(book);
-
             return true;
         } catch (Exception e) {
+            e.printStackTrace();
             return false;
         }
     }

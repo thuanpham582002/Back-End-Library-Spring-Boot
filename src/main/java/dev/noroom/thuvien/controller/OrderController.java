@@ -4,6 +4,7 @@ import dev.noroom.thuvien.model.Order;
 import dev.noroom.thuvien.model.Review;
 import dev.noroom.thuvien.model.dto.OrderDto;
 import dev.noroom.thuvien.service.OrderService;
+import dev.noroom.thuvien.service.UserService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -13,9 +14,11 @@ import java.util.List;
 @RequestMapping("/api/orders")
 public class OrderController {
     private final OrderService orderService;
+    private final UserService userService;
 
-    public OrderController(OrderService orderService) {
+    public OrderController(OrderService orderService, UserService userService) {
         this.orderService = orderService;
+        this.userService = userService;
     }
 
     @GetMapping("/")
@@ -54,7 +57,7 @@ public class OrderController {
     @PostMapping("/add")
     public ResponseEntity<?> addOrder(@RequestBody OrderDto orderDto) {
         System.out.println(orderDto);
-        if (orderService.addOrder(orderDto)) {
+        if (orderService.addOrder(OrderDto.toOrder(orderDto, userService))) {
             return ResponseEntity.ok()
                     .build();
         } else {
@@ -76,7 +79,7 @@ public class OrderController {
 
     @PutMapping("/update")
     public ResponseEntity<?> updateOrder(@RequestBody OrderDto orderDto) {
-        if (orderService.updateOrder(orderDto)) {
+        if (orderService.updateOrder(OrderDto.toOrder(orderDto, userService))) {
             return ResponseEntity.ok()
                     .build();
         } else {

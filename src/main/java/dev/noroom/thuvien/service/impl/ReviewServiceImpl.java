@@ -52,6 +52,7 @@ public class ReviewServiceImpl implements ReviewService {
             reviewRepository.save(review1);
             return true;
         } catch (Exception e) {
+            e.printStackTrace();
             return false;
         }
     }

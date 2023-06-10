@@ -21,4 +21,29 @@ public class GenreServiceImpl implements GenreService {
         System.out.println("getAllGenres");
         return genreRepository.findAll();
     }
+
+    @Override
+    public Genre getGenreById(Long id) {
+        System.out.println("getGenreById");
+        return genreRepository.findById(id)
+                .orElseThrow();
+    }
+
+    @Override
+    public boolean addGenre() {
+        // TODO
+        return false;
+    }
+
+    @Override
+    public boolean deleteGenre() {
+        // TODO
+        return false;
+    }
+
+    @Override
+    public boolean updateGenre() {
+        // TODO
+        return false;
+    }
 }
